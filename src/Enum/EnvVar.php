@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Bilo\Enum;
+
+enum EnvVar: string
+{
+    case MYSQL_HOST = 'MYSQL_HOST';
+    case MYSQL_PORT = 'MYSQL_PORT';
+    case MYSQL_DATABASE = 'MYSQL_DATABASE';
+    case MYSQL_USER = 'MYSQL_USER';
+    case MYSQL_PASSWORD = 'MYSQL_PASSWORD';
+    case MYSQL_ROOT_PASSWORD = 'MYSQL_ROOT_PASSWORD';
+    case DEBUG = 'DEBUG';
+    case POSITIVE_THRESHOLD = 'POSITIVE_THRESHOLD';
+    case NEGATIVE_THRESHOLD = 'NEGATIVE_THRESHOLD';
+    case ALERT_NOTIFICATION_URL = 'ALERT_NOTIFICATION_URL';
+    case NOTIFICATION_URL = 'NOTIFICATION_URL';
+    case REPORT_DIR = 'REPORT_DIR';
+}

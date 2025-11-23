@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  title: Bilo API
+  description: API for managing records
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Local server
+paths:
+  /search/status/{id}:
+    get:
+      summary: Search status
+      description: Retrieves the status of a search request by its ID
+      operationId: searchStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the search request
+          schema:
+            type: string
+            format: uuid
+            example: 9ebd94f3-f954-4a9e-b23f-3a0ae4c3bfbf
+      responses:
+        '200':
+          description: Status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Invalid ID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid ID parameter"
+        '404':
+          description: Search request not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Search request not found"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /search/request:
+    post:
+      summary: Create a new search request
+      description: Creates a new search request with optional filters for record type and time period
+      operationId: searchRequest
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequestBody'
+      responses:
+        '202':
+          description: Search request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request parameters"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /search/aggregate:
+    post:
+      summary: Search aggregate data
+      description: Creates a aggregate search request with optional filters for record type and time period
+      operationId: duplicateSearchRequest
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequestBody'
+      responses:
+        '202':
+          description: Duplicate search request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request parameters"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /record:
+    post:
+      summary: Create a new record
+      description: Creates a new record with the provided data
+      operationId: createRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - recordId
+                - time
+                - sourceId
+                - destinationId
+                - type
+                - value
+                - unit
+                - reference
+              properties:
+                recordId:
+                  type: string
+                  description: Unique identifier for the record
+                  example: "rec_123456"
+                time:
+                  type: string
+                  format: date-time
+                  description: Timestamp of the record
+                  example: "2025-11-18T10:30:00Z"
+                sourceId:
+                  type: string
+                  description: Identifier of the source
+                  example: "source_001"
+                destinationId:
+                  type: string
+                  description: Identifier of the destination
+                  example: "dest_001"
+                type:
+                  type: string
+                  enum:
+                    - positive
+                    - negative
+                  description: Type of the record
+                  example: "positive"
+                value:
+                  type: number
+                  format: decimal
+                  description: Numeric value of the record
+                  exclusiveMaximum: 90000000000000000
+                  multipleOf: 0.01
+                  example: 123.45
+                unit:
+                  type: string
+                  description: Unit of measurement
+                  example: "kg"
+                reference:
+                  type: string
+                  description: Reference identifier or note
+                  example: "ref_abc123"
+      responses:
+        '201':
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    enum: [true]
+                    example: true
+                  message:
+                    type: string
+                    example: "Record created successfully"
+        '422':
+          description: Existing record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    enum: [false]
+                    example: false
+                  message:
+                    type: string
+                    items:
+                      type: string
+                      example: "Record already exists"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    enum: [false]
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    enum: [false]
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+components:
+  schemas:
+    SearchRequestBody:
+      type: object
+      properties:
+        recordType:
+          type: string
+          enum:
+            - positive
+            - negative
+          description: Type of records to search for (optional)
+          example: "positive"
+        period:
+          type: object
+          required:
+            - startDate
+            - endDate
+          properties:
+            startDate:
+              type: string
+              format: date-time
+              description: Start date of the search period
+              example: "2025-11-01T00:00:00Z"
+            endDate:
+              type: string
+              format: date-time
+              description: End date of the search period
+              example: "2025-11-22T23:59:59Z"
+          description: Time period for the search (optional)
+    SearchResponse:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the search request
+          example: 9ebd94f3-f954-4a9e-b23f-3a0ae4c3bfbf
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - IN_PROGRESS
+            - DONE
+            - FAILED
+          description: Current status of the search request
+          example: "IN_PROGRESS"
+        url:
+          type: string
+          description: The url where you can download the search results. The url is available when status is `DONE`
+          example: "http://s3.com/something.csv"

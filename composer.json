@@ -1,0 +1,38 @@
+{
+  "name": "alexconrad/brecord",
+  "description": "Elite Dangerous Xeno Flora Journey - PHP 8.4+ with Slim and PHP-DI",
+  "type": "project",
+  "require": {
+    "php": ">=8.4",
+    "ext-bcmath": "*",
+    "ext-apcu": "*",
+    "slim/slim": "^4.0",
+    "slim/psr7": "^1.0",
+    "php-di/php-di": "^7.0",
+    "php-di/slim-bridge": "^3.0",
+    "twig/twig": "^3.22",
+    "vlucas/phpdotenv": "^5.0",
+    "ext-pdo": "*",
+    "symfony/console": "^7.3",
+    "league/openapi-psr7-validator": "^0.22",
+    "symfony/cache": "^7.3",
+    "monolog/monolog": "^3.9",
+    "guzzlehttp/guzzle": "^7.10",
+    "symfony/lock": "^7.3",
+    "ramsey/uuid": "^4.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bilo\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "vimeo/psalm": "^6.13",
+    "phpunit/phpunit": "^12.4"
+  }
+}

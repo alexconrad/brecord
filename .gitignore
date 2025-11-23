@@ -1,3 +1,8 @@
+logs/*
+!logs/.gitkeep
+public/reports/*
+!public/reports/.gitkeep
 /vendor/
 /.phpunit.cache
 .env
+

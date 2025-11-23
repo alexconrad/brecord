@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # PHP/Apache service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bilo
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8090:80"
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www
+
+       # MySQL service
+  db:
+    image: mysql:8.1
+    container_name: bilo-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_HOST_PORT}:${MYSQL_PORT}"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-P", "3306", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  db_data:
