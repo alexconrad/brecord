@@ -35,6 +35,12 @@ class OpenApiValidationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
 
+        // Only validate requests that have api/v1 in their path
+        $path = $request->getUri()->getPath();
+        if (!str_contains($path, 'api/v1')) {
+            return $handler->handle($request);
+        }
+
         try {
             /**
              * In ValidatorBuilder We can use ->setCache( instance of CacheItemPoolInterface)

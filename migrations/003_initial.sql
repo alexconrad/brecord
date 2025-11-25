@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
--- Host:                         localhost
--- Server version:               8.1.0 - MySQL Community Server - GPL
+-- Host:                         142.93.104.116
+-- Server version:               8.0.44-0ubuntu0.24.04.1 - (Ubuntu)
 -- Server OS:                    Linux
 -- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `destinations`
     PRIMARY KEY (`id_destination`),
     UNIQUE KEY `destinationId` (`destinationId`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 1073
+  AUTO_INCREMENT = 6835
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -74,9 +74,9 @@ CREATE TABLE IF NOT EXISTS `queues`
     `deleted`       tinyint unsigned  NOT NULL,
     `process_after` datetime          NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `queue_id` (`queue_id`, `deleted`, `process_after`) USING BTREE
+    KEY `queue_id` (`queue_id`, `deleted`, `claimed`, `process_after`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
+  AUTO_INCREMENT = 18504
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `records`
     PRIMARY KEY (`id_record`),
     UNIQUE KEY `recordId` (`recordId`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 1419
+  AUTO_INCREMENT = 10666
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `refs`
     PRIMARY KEY (`id_reference`),
     UNIQUE KEY `reference` (`ref`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 100
+  AUTO_INCREMENT = 5925
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `sources`
     PRIMARY KEY (`id_source`),
     UNIQUE KEY `sourceId` (`sourceId`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 1078
+  AUTO_INCREMENT = 6832
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -161,7 +161,6 @@ CREATE TABLE IF NOT EXISTS `to_aggregate`
     `positive`       tinyint unsigned        NOT NULL,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 7
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = DYNAMIC;
@@ -176,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `units`
     PRIMARY KEY (`id_unit`),
     UNIQUE KEY `unit` (`unit`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 749
+  AUTO_INCREMENT = 840
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
