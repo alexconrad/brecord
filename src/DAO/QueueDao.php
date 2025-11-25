@@ -86,17 +86,22 @@ class QueueDao
         $this->connection->execute("UPDATE queues SET deleted = 1 WHERE id = ?", [$id]);
     }
 
-    /**
-     * @throws MySqlQueryException
-     */
     public function insertMessage(Queue $queue, string $data, int $delaySeconds = 0): int
     {
-        $this->connection->execute(
-            "INSERT INTO queues SET queue_id = ? , claimed = 0, deleted = 0, process_after = NOW() + INTERVAL ? SECOND",
-            [$queue->value, $delaySeconds]
-        );
-        $id = (int) $this->connection->lastInsertId();
-        $this->connection->execute("INSERT INTO queue_data SET id = ? , msg = ? ", [$id, $data]);
+        try {
+            $this->connection->beginTransaction();
+            $this->connection->execute(
+                "INSERT INTO queues SET queue_id = ? , claimed = 0, deleted = 0, process_after = NOW() + INTERVAL ? SECOND",
+                [$queue->value, $delaySeconds]
+            );
+            $id = (int) $this->connection->lastInsertId();
+            $this->connection->execute("INSERT INTO queue_data SET id = ? , msg = ? ", [$id, $data]);
+            $this->connection->commit();
+        } catch (MySqlQueryException $e) {
+            $this->connection->rollback();
+            throw $e;
+        }
+
         return $id;
     }
 
