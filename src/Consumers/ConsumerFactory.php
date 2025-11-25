@@ -20,7 +20,7 @@ class ConsumerFactory
             return $this->container->get(AlertConsumer::class);
         }
         if ($queue === Queue::notification) {
-            return $this->container->get(SearchAggregateConsumer::class);
+            return $this->container->get(NotificationConsumer::class);
         }
         if ($queue === Queue::notification_http) {
             return $this->container->get(NotificationHttpConsumer::class);
