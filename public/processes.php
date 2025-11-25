@@ -101,8 +101,12 @@
         ?>
             <div class="col-md-6 mb-2">
             <div class="terminal-card">
-                <div class="terminal-header">
-                    Queue: <?= htmlspecialchars($name) ?>
+                <div class="terminal-header" style="padding-top: 0;">
+                    <a href="/index.php/monitor/add/<?= htmlspecialchars($name) ?>"
+                       class="btn btn-success btn-sm btn-add">+</a>
+                    <span style="margin-top: 10px;">
+                    Queue: <?= htmlspecialchars($name)?> (<?php echo empty($processes)?0:count($processes)?>)
+                    </span>
                 </div>
                 <div class="terminal-body">
                     <?php if (empty($processes)): ?>
@@ -115,19 +119,14 @@
                             <div class="process-line">
                                 <a href="/index.php/monitor/stop/<?= htmlspecialchars($pid) ?>" 
                                    class="btn btn-danger btn-sm btn-stop"
-                                   onclick="return confirm('Stop process <?= htmlspecialchars($pid) ?>?')">STOP</a>
+                                   >STOP</a>
                                 <span class="pid-badge">PID: <?= htmlspecialchars($pid) ?></span>
                                 <span class="process-command"><?= htmlspecialchars($command) ?></span>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
 
-                    <div class="mt-3">
-                        <a href="/index.php/monitor/add/<?= htmlspecialchars($name) ?>" 
-                           class="btn btn-success btn-sm btn-add">
-                            ➕ Add New Consumer
-                        </a>
-                    </div>
+
                 </div>
             </div>
             </div>
