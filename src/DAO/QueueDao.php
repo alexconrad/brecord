@@ -26,7 +26,7 @@ class QueueDao
         try {
             $this->connection->beginTransaction();
             if ($id = $this->connection->getOne(
-                "SELECT id FROM queues WHERE queues.queue_id = ? AND deleted = 0 AND claimed = 0 AND process_after <= NOW() ORDER BY id {$order} LIMIT 1 FOR UPDATE",
+                "SELECT id FROM queues WHERE queues.queue_id = ? AND deleted = 0 AND claimed = 0 AND process_after <= NOW() ORDER BY id {$order} LIMIT 1 FOR UPDATE SKIP LOCKED",
                 [$queue->value]
             )) {
                 $this->connection->execute("UPDATE queues SET claimed = 1 WHERE id = ?", [$id]);
