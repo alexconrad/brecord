@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: Bilo API
   description: API for managing records
@@ -144,56 +144,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - recordId
-                - time
-                - sourceId
-                - destinationId
-                - type
-                - value
-                - unit
-                - reference
-              properties:
-                recordId:
-                  type: string
-                  description: Unique identifier for the record
-                  example: "rec_123456"
-                time:
-                  type: string
-                  format: date-time
-                  description: Timestamp of the record
-                  example: "2025-11-18T10:30:00Z"
-                sourceId:
-                  type: string
-                  description: Identifier of the source
-                  example: "source_001"
-                destinationId:
-                  type: string
-                  description: Identifier of the destination
-                  example: "dest_001"
-                type:
-                  type: string
-                  enum:
-                    - positive
-                    - negative
-                  description: Type of the record
-                  example: "positive"
-                value:
-                  type: number
-                  format: decimal
-                  description: Numeric value of the record
-                  exclusiveMaximum: 90000000000000000
-                  multipleOf: 0.01
-                  example: 123.45
-                unit:
-                  type: string
-                  description: Unit of measurement
-                  example: "kg"
-                reference:
-                  type: string
-                  description: Reference identifier or note
-                  example: "ref_abc123"
+              $ref: '#/components/schemas/Record'
       responses:
         '201':
           description: Record created successfully
@@ -255,9 +206,141 @@ paths:
                     type: array
                     items:
                       type: string
+webhooks:
+  alert:
+    post:
+      summary: Value alert
+      description: Triggered when a record value exceeds threshold
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - threshold
+                - record
+              properties:
+                threshold:
+                  type: number
+                  format: decimal
+                  description: The value of the threshold that was exceeded
+                record:
+                  description: The record that triggered the alert
+                  $ref: '#/components/schemas/Record'
 
+
+      responses:
+        '200':
+          description: Returned by the client to acknowledge the webhook
+        '4xx or anything but 200':
+          description: Retries in 1 minute.
+  resourceCreated:
+    post:
+      summary: Record created notification
+      description: Triggered for every created record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - record
+                - previousDestinationReference
+              properties:
+                record:
+                  $ref: '#/components/schemas/Record'
+                previousDestinationReference:
+                  type: object
+                  properties:
+                    count_positive:
+                      type: number
+                      format: integer
+                      description: Count of all the positive records with the same destination and reference
+                      exclusiveMaximum: 90000000000000000
+                      multipleOf: 0.01
+                      example: 10
+                    count_negative:
+                      type: number
+                      format: integer
+                      description: Count of all the negative records with the same destination and reference
+                      exclusiveMaximum: 90000000000000000
+                      multipleOf: 0.01
+                      example: 10
+                    sum_positive:
+                      type: number
+                      format: decimal
+                      description: Sum of all the positive records with the same destination and reference
+                      exclusiveMaximum: 90000000000000000
+                      multipleOf: 0.01
+                      example: 194.52
+                    sum_negative:
+                      type: number
+                      format: decimal
+                      description: Sum of all the negative records with the same destination and reference
+                      exclusiveMaximum: 90000000000000000
+                      multipleOf: 0.01
+                      example: 194.52
+
+      responses:
+        '200':
+          description: Returned by the client to acknowledge the webhook
+        '4xx or anything but 200':
+          description: Retries in 1 minute.
 components:
   schemas:
+    Record:
+      type: object
+      required:
+        - recordId
+        - time
+        - sourceId
+        - destinationId
+        - type
+        - value
+        - unit
+        - reference
+      properties:
+        recordId:
+          type: string
+          description: Unique identifier for the record
+          example: "rec_123456"
+        time:
+          type: string
+          format: date-time
+          description: Timestamp of the record
+          example: "2025-11-18T10:30:00Z"
+        sourceId:
+          type: string
+          description: Identifier of the source
+          example: "source_001"
+        destinationId:
+          type: string
+          description: Identifier of the destination
+          example: "dest_001"
+        type:
+          type: string
+          enum:
+            - positive
+            - negative
+          description: Type of the record
+          example: "positive"
+        value:
+          type: number
+          format: decimal
+          description: Numeric value of the record
+          exclusiveMaximum: 90000000000000000
+          multipleOf: 0.01
+          example: 123.45
+        unit:
+          type: string
+          description: Unit of measurement
+          example: "kg"
+        reference:
+          type: string
+          description: Reference identifier or note
+          example: "ref_abc123"
     SearchRequestBody:
       type: object
       properties:
