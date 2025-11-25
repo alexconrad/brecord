@@ -37,7 +37,10 @@ class SearchRequestsDao
     public function getStatus(string $uuid): ?array
     {
         $sql = "SELECT search_type, status FROM search_requests WHERE id_search_request = ?";
-        return array_values($this->connection->getRow($sql, [$uuid]));
+        if ($row = $this->connection->getRow($sql, [$uuid])) {
+            return array_values($row);
+        }
+        return null;
     }
 
 
