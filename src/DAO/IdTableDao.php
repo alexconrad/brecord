@@ -19,8 +19,8 @@ class IdTableDao
 
     public function getField(IdTable $table, int $id): ?string
     {
-        $query = "SELECT * FROM {$table->name} WHERE {$table->value} = ?";
-        return $this->connection->getOne($query, [$id], 1);
+        $query = "SELECT ".$table->getField()." FROM {$table->name} WHERE {$table->value} = ?";
+        return $this->connection->getOne($query, [$id]);
     }
 
     /**
