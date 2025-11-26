@@ -7,12 +7,14 @@ namespace Bilo\Consumers;
 use Bilo\Consumers\Exception\DelayMessageException;
 use Bilo\Database\Exception\MySqlQueryException;
 use Bilo\Enum\EnvVar;
+use Bilo\Enum\IdTable;
 use Bilo\Enum\SearchRequestStatus;
 use Bilo\Service\AggregationService;
 use Bilo\Service\ConfigService;
 use Bilo\Service\EntityBuilder;
 use Bilo\Service\RecordService;
 use Bilo\Service\SearchService;
+use Bilo\Service\TableIdService;
 use DateTimeImmutable;
 use Exception;
 use InvalidArgumentException;
@@ -29,6 +31,7 @@ class SearchAggregateConsumer implements ConsumerInterface
         private readonly ConfigService $configService,
         private readonly RecordService $recordService,
         private readonly SearchService $searchService,
+        private readonly TableIdService $entityIdService,
     ) {
     }
 
@@ -153,6 +156,12 @@ class SearchAggregateConsumer implements ConsumerInterface
                     ConfigService::DECIMAL_PLACES
                 );
             }
+        }
+
+        foreach ($destinationGroup as $idDestination=>$destination) {
+            $destinationId = $this->entityIdService->getFieldValue(IdTable::destinations, $idDestination);
+            $destinationGroup[$destinationId] = $destination;
+            unset($destinationGroup[$idDestination]);
         }
 
         return $destinationGroup;
